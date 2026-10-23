@@ -1,0 +1,19 @@
+/* GRAVK Layout: стили для ВСЕХ страниц сайта (подключаются в manifest.json).
+   Действие: уменьшает высоту верхней шапки сайта до 45px. */
+  @media (min-width: 768px) {
+
+    /* Высота шапки сайта */
+    header.site-header {
+      height: 45px !important;
+      min-height: 45px !important;
+    }
+
+    /* Меню в шапке: без вертикальных отступов, по центру */
+    header.site-header nav {
+      height: 100% !important;
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      align-items: center !important;
+      box-sizing: border-box !important;
+    }
+  }

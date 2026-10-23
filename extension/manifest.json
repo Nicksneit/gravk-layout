@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "GRAVK Layout",
+  "version": "3.0.0",
+  "description": "Компактная страница игры на gravk.com: оценки рядом с постером, описание, теги и отзывы в ряд.",
+  "minimum_chrome_version": "111",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://gravk.com/*",
+        "https://www.gravk.com/*"
+      ],
+      "css": [
+        "content/site.css"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://gravk.com/game/*",
+        "https://gravk.com/en/game/*",
+        "https://www.gravk.com/game/*",
+        "https://www.gravk.com/en/game/*"
+      ],
+      "css": [
+        "content/game.css"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://gravk.com/*",
+        "https://www.gravk.com/*"
+      ],
+      "js": [
+        "content/layout.js"
+      ],
+      "run_at": "document_idle",
+      "world": "MAIN"
+    }
+  ]
+}

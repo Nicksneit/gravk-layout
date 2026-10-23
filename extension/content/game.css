@@ -1,0 +1,475 @@
+/* GRAVK Layout: стили ТОЛЬКО для страниц игр (/game/... и /en/game/...).
+   Работают вместе со скриптом layout.js: он переносит блоки и ставит классы gravk-*.
+
+   Итоговая раскладка:
+     ряд 1: постер | оценки (+ Платформи/Колекція/Крамниці под ними) | панель кнопок
+     ряд 2: строка версий игры
+     ряд 3: [описание, под ним остальные теги] | заголовок + отзывы */
+  @media (min-width: 768px) {
+
+    /* ---------------------------------------------------------------
+       2.1. ЗАГОЛОВОК ИГРЫ И ОТСТУПЫ СТРАНИЦЫ
+       --------------------------------------------------------------- */
+
+    /* Главный контейнер страницы: меньше отступов сверху и снизу, меньше промежутки */
+    div.container.mx-auto.flex.flex-col {
+      margin-top: 0 !important;
+      padding-top: 15px !important;
+      padding-bottom: 8px !important;
+      gap: 12px !important;
+    }
+
+    /* Заголовок игры: название сверху, дата • разработчик и бейджи в строку ниже */
+    header.flex.flex-col.items-start {
+      margin-top: 12px !important;
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      align-items: center !important;
+      gap: 6px 8px !important;
+    }
+
+    /* Название игры занимает всю ширину (строка 1) */
+    header.flex.flex-col.items-start > h1 {
+      flex-basis: 100% !important;
+      width: 100% !important;
+      margin-bottom: 4px !important;
+    }
+
+    /* Дата и разработчик: без внешних отступов, текст может переноситься */
+    header.flex.flex-col.items-start > div.text-sm {
+      margin: 0 !important;
+      white-space: normal !important;
+    }
+
+    /* Точка-разделитель перед разработчиком */
+    header.flex.flex-col.items-start > div.text-sm.leading-relaxed::before {
+      content: "• ";
+      margin-right: 4px;
+      color: #94a3b8;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.2. ОБЩАЯ РАСКЛАДКА (включается классом .gravk-root от скрипта)
+       --------------------------------------------------------------- */
+
+    /* Контейнер с постером: элементы переносятся на новые строки (ряды) */
+    .gravk-root {
+      flex-wrap: wrap !important;
+      align-items: flex-start !important;
+      row-gap: 0 !important;
+      column-gap: 1.5rem !important;
+    }
+
+    /* Гарантированный разрыв строки между рядом 1 и остальными (не зависит от строки версий) */
+    .gravk-root::after {
+      content: "";
+      order: 3;
+      flex: 0 0 100%;
+      height: 0;
+    }
+
+    /* Посторонние элементы контейнера уходят в конец, а не встают перед постером */
+    .gravk-root > :not(.gravk-posterwrap):not(.gravk-mid):not(.gravk-left):not(.gravk-reviews):not(#tabs) {
+      order: 7;
+    }
+
+    /* Обёртки, помеченные скриптом, "растворяются": их дети становятся элементами контейнера */
+    .gravk-flat {
+      display: contents !important;
+    }
+
+    /* Оригиналы, которые скрипт заменил своими копиями (оценки), прячем */
+    .gravk-hide {
+      display: none !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.3. РЯД 1: ПОСТЕР
+       --------------------------------------------------------------- */
+
+    /* Постер: компактная колонка слева, не на всю ширину */
+    .gravk-root > .gravk-posterwrap {
+      order: 1 !important;
+      flex: 0 0 auto !important;
+      width: auto !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.4. РЯД 1: ОЦЕНКИ + ПАНЕЛЬ КНОПОК (+ теги под оценками)
+       --------------------------------------------------------------- */
+
+    /* Общий контейнер: сетка из двух колонок (оценки | панель), панель всегда справа */
+    .gravk-mid {
+      order: 2;
+      flex: 1 1 790px;
+      min-width: min(790px, 100%);
+      display: grid !important;
+      grid-template-columns: minmax(410px, 820px) auto;
+      gap: 0.75rem 1.5rem;
+      align-items: stretch;
+      align-content: start;
+    }
+
+    /* Блок оценок: левая колонка сетки, по высоте равен панели справа */
+    .gravk-mid > .xl\:w-1\/2.select-none.gravk-stats-moved {
+      grid-column: 1;
+      grid-row: 1;
+      flex: none !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      align-self: stretch !important;
+      container-type: inline-size;       /* нужно для @container ниже (адаптация кнопок и строки оценок) */
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    /* Содержимое блока оценок растягивается на всю высоту */
+    .gravk-mid > .gravk-stats-moved > div {
+      flex: 1 1 auto !important;
+    }
+    .gravk-mid > .gravk-stats-moved .rounded-lg.p-4 {
+      flex: 1 1 auto !important;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    /* Панель кнопок (Пройдено / До беклогу / ...): правая колонка сетки */
+    .gravk-mid > div.hidden.md\:flex {
+      grid-column: 2;
+      grid-row: 1;
+      align-self: stretch !important;
+      gap: 0 !important;
+    }
+
+    /* Рамка панели занимает всю высоту ряда (растёт вместе с блоком оценок) */
+    .gravk-mid > div.hidden.md\:flex > div:first-child {
+      height: auto !important;
+      flex: 1 1 auto !important;
+    }
+
+    /* Панель: расстояние между рядами кнопок */
+    .gravk-mid > div.hidden.md\:flex div.flex.flex-col.gap-3\.5 {
+      gap: 0.5rem !important;
+    }
+
+    /* Панель: промежутки между маленькими кнопками (сердце / корзина / список) */
+    .gravk-mid > div.hidden.md\:flex div.flex.flex-col.gap-3\.5 > div.flex.gap-3.w-full {
+      gap: 0.5rem !important;
+    }
+
+    /* Подпись "PC · 12 год · дата" (скрипт перенёс её внутрь рамки панели):
+       не расширяет рамку, а переносится по ширине кнопок; прижата вниз, сверху тонкая линия */
+    .gravk-datecap {
+      width: 0 !important;
+      min-width: 100% !important;
+      box-sizing: border-box !important;
+      margin: auto 0 0 0 !important;
+      padding-top: 0.6rem !important;
+      border-top: 1px solid rgb(51 65 85 / 0.6);
+      text-align: center !important;
+      white-space: normal !important;
+      overflow-wrap: anywhere !important;
+      flex: 0 0 auto !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.5. РЯД 1: ПЛАТФОРМИ / КОЛЕКЦІЯ / КРАМНИЦІ ПОД ОЦЕНКАМИ
+       --------------------------------------------------------------- */
+
+    /* Три секции тегов (перенесены скриптом): под блоком оценок, на всю его ширину */
+    .gravk-mid > .gravk-meta {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 1rem 2.5rem;
+      padding: 0 0.25rem;
+    }
+
+    /* Если секций нет, контейнер не занимает места */
+    .gravk-mid > .gravk-meta:empty {
+      display: none;
+    }
+
+    /* Секция: ширина по содержимому, максимум 438px (дальше теги переносятся на вторую строку) */
+    .gravk-meta > div {
+      flex: 0 1 auto !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: 438px !important;
+    }
+
+    /* Пустая секция (нет значений у игры) скрывается, соседние занимают её место */
+    .gravk-meta > div:not(:has(> :nth-child(2))) {
+      display: none !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.6. РЯД 2: СТРОКА ВЕРСИЙ ИГРЫ
+       --------------------------------------------------------------- */
+
+    /* Строка версий (Resident Evil 2 / Deluxe Edition / ...): на всю ширину */
+    #tabs.gravk-tabs {
+      order: 4;
+      flex: 0 0 100%;
+      min-width: 0;
+      margin-top: 1rem;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.7. РЯД 3 СЛЕВА: ОПИСАНИЕ, ПОД НИМ ОСТАЛЬНЫЕ ТЕГИ
+       --------------------------------------------------------------- */
+
+    /* Левая колонка: от 280px до 620px, ~36% ширины */
+    .gravk-left {
+      order: 5;
+      flex: 0 0 clamp(280px, 36%, 620px);
+      min-width: 0;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    /* Всё внутри колонки: на всю ширину колонки, без собственных линий и отступов сайта */
+    .gravk-left > * {
+      flex: 0 0 auto !important;
+      order: 0 !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      border-top: 0 !important;
+      padding-top: 0 !important;
+      margin-top: 0 !important;
+    }
+
+    /* Описание игры: всегда раскрыто полностью (снимаем обрезку "…") */
+    p.leading-relaxed.text-slate-100.text-xs {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-height: 0 !important;
+      line-height: 1.7 !important;
+      display: block !important;
+      -webkit-line-clamp: unset !important;
+      line-clamp: unset !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
+
+    /* Оставшиеся группы тегов (Жанри / Теми / Рушій): в строку слева направо с переносом */
+    .gravk-left div.flex.flex-col.gap-4 > div.flex-row.flex-wrap.md\:flex-nowrap {
+      flex-wrap: wrap !important;
+      align-items: flex-start !important;
+      gap: 1.5rem 2.5rem !important;
+    }
+
+    /* Две вложенные колонки сайта "растворяем": каждая группа становится отдельным элементом ряда */
+    .gravk-left div.flex.flex-col.gap-4 > div.flex-row.flex-wrap.md\:flex-nowrap > div {
+      display: contents !important;
+    }
+
+    /* Группа: ширина по содержимому, максимум 338px (дальше теги переносятся) */
+    .gravk-left div.flex.flex-col.gap-4 > div.flex-row.flex-wrap.md\:flex-nowrap > div > div {
+      flex: 0 1 auto !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: 338px !important;
+    }
+
+    /* Пустые группы скрываем, соседние занимают их место */
+    .gravk-left div.flex.flex-col.gap-4 > div.flex-row.flex-wrap.md\:flex-nowrap > div > div:not(:has(> :nth-child(2))) {
+      display: none !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.8. РЯД 3 СПРАВА: ЗАГОЛОВОК "СТАТИСТИКА ТА ВІДГУКИ" + ОТЗЫВЫ
+       --------------------------------------------------------------- */
+
+    /* Блок отзывов занимает всё оставшееся место справа, минимум 420px */
+    .gravk-reviews {
+      order: 6;
+      flex: 1 1 0;
+      min-width: 420px;
+      margin-top: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* Колонка с отзывами внутри: на всю ширину блока */
+    .gravk-reviews div.xl\:w-1\/2.min-w-0.flex.flex-col.gap-4 {
+      width: 100% !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.9. БЛОК ОЦЕНОК: ВЕРХНЯЯ ЧАСТЬ (оценки + аватарки)
+       --------------------------------------------------------------- */
+
+    /* Верхняя часть вертикальная: оценки сверху, аватарки под ними */
+    .xl\:w-1\/2.select-none .flex.flex-row.gap-6 {
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 0.4rem !important;
+      padding: 0.2rem 0 !important;
+    }
+
+    /* Контейнер аватарок и кнопки "Показати більше": по центру на всю ширину */
+    .xl\:w-1\/2.select-none .flex.flex-col.gap-4 {
+      align-items: center !important;
+      width: 100% !important;
+      gap: 0.5rem !important;
+    }
+
+    /* Кнопка "Показати більше / Show more": без внешних отступов */
+    .xl\:w-1\/2.select-none .flex.flex-col.gap-4 > button {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* Аватарки игроков: 8 в ряд */
+    .xl\:w-1\/2.select-none .flex.gap-3.flex-wrap {
+      display: grid !important;
+      grid-template-columns: repeat(8, 1fr) !important;
+      gap: 0.8rem !important;
+      justify-items: center !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    /* Внутренний отступ рамки блока оценок */
+    .xl\:w-1\/2.select-none .rounded-lg.p-4 {
+      padding: 0.6rem 0.9rem !important;
+    }
+
+    /* Контейнер сетки кнопок: на всю ширину блока, без лишних отступов */
+    .xl\:w-1\/2.select-none .md\:col-span-4 {
+      padding: 0 !important;
+      margin: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: stretch !important;
+      align-self: stretch !important;
+      width: 100% !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.10. БЛОК ОЦЕНОК: КНОПКИ СТАТИСТИКИ
+       --------------------------------------------------------------- */
+
+    /* По умолчанию 4 колонки (2 ряда), кнопки растягиваются на всю ширину блока */
+    .xl\:w-1\/2.select-none .grid.grid-cols-2.md\:grid-cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      gap: 0.4rem !important;
+      width: 100% !important;
+      margin: 0 !important;
+    }
+
+    /* Если блок оценок шире 780px: все 8 кнопок в один ряд */
+    @container (min-width: 780px) {
+      .xl\:w-1\/2.select-none .grid.grid-cols-2.md\:grid-cols-4 {
+        grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+      }
+    }
+
+    /* Кнопка: иконка слева, число и подпись справа, заполняет свою ячейку */
+    .xl\:w-1\/2.select-none .grid button {
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.35rem !important;
+      padding: 0.45rem 0.3rem !important;
+      min-height: auto !important;
+      width: 100% !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      box-sizing: border-box !important;
+      text-align: center !important;
+      overflow: hidden !important;
+    }
+
+    /* Подписи и числа в кнопках: компактнее, не обрезаются */
+    .xl\:w-1\/2.select-none .grid button span {
+      font-size: 0.85rem !important;
+      line-height: 1.15 !important;
+      margin: 0 !important;
+      white-space: normal !important;
+      min-width: 0 !important;
+      max-width: none !important;
+      text-align: center !important;
+      overflow: visible !important;
+      text-overflow: clip !important;
+    }
+
+    /* Иконки в кнопках статистики крупнее */
+    .xl\:w-1\/2.select-none .grid button svg {
+      width: 1.9rem !important;
+      height: 1.9rem !important;
+      min-width: 1.9rem !important;
+      flex-shrink: 0 !important;
+    }
+
+
+    /* ---------------------------------------------------------------
+       2.11. СТРОКА ОЦЕНОК: ОБЩАЯ | АВАТАРКИ | МОЯ
+       (строку собирает скрипт; "--" в моей оценке, если вы не оценивали)
+       --------------------------------------------------------------- */
+
+    /* По умолчанию (узкий блок): две оценки в первой строке, аватарки под ними */
+    .gravk-scorerow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      gap: 0.5rem 1rem;
+      width: 100%;
+    }
+    .gravk-scorerow > .gravk-avatars-block {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      min-width: 0;
+    }
+    .gravk-scorerow > .gravk-score-total { grid-column: 1; grid-row: 1; }
+    .gravk-scorerow > .gravk-score-mine  { grid-column: 2; grid-row: 1; }
+
+    /* Одна оценка: бейдж + подпись под ним */
+    .gravk-score {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Подпись под бейджем ("117 оцінок" / "Ваша оцінка") */
+    .gravk-score-label {
+      font-size: 0.85rem;
+      line-height: 1.2;
+      color: #cbd5e1;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Если блок оценок шире 540px: общая слева, аватарки посередине, моя справа */
+    @container (min-width: 540px) {
+      .gravk-scorerow {
+        grid-template-columns: auto minmax(0, 1fr) auto;
+      }
+      .gravk-scorerow > .gravk-avatars-block { grid-column: 2; grid-row: 1; }
+      .gravk-scorerow > .gravk-score-total   { grid-column: 1; }
+      .gravk-scorerow > .gravk-score-mine    { grid-column: 3; }
+      .gravk-scorerow .gravk-avatars-block .flex.gap-3.flex-wrap {
+        gap: 0.5rem !important;
+      }
+    }
+  }
