@@ -1,0 +1,25 @@
+# Системные файлы
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Редакторы и IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Зависимости
+node_modules/
+
+# Сборки и архивы
+dist/
+build/
+*.zip
+*.crx
+*.xpi
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.cache
